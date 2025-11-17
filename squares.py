@@ -50,24 +50,32 @@ def convert_numbers(list_of_strings):
     # ...then convert each substring into a number
     return [float(number_string) for number_string in all_numbers]
 
+def read_file(file_path):
+    with open(file_path, "r") as f:
+        return f.readlines()
+
+#import numpy as np 
+#number_data = np.loadtxt("number.txt", dtype=str)
+#weight_data = np.loadtxt("weight.txt", dtype=str)
 
 if __name__ == "__main__":
     parser = ArgumentParser(description="Compute the weighted average of squares.")
-    parser.add_argument('numbers', nargs='*', default=[],
-                        help="List of numbers (whitespace allowed within strings).")
-    parser.add_argument('--weights', '-w',nargs='*',
-                        help="List of weights")
-    arguments_numbers = parser.parse_args().numbers
-    arguments_weights = parser.parse_args().weights
-
-    #print(arguments)
-
-    #numbers_strings = ["1","2","4"]
-    #weight_strings = ["1","1","1"]        
+    parser.add_argument('numbers_file', nargs=1, type = str,
+                        help="File containing a list of numbers (whitespace allowed within strings).")
+    parser.add_argument('--weights_file', '-w',nargs='?', type = str, default=None,
+                        help="File containing a List of weights")
     
-    numbers = convert_numbers(arguments_numbers)
-    weights = convert_numbers(arguments_weights)
+    args =  parser.parse_args() # dont want to run mutliple times when imported
+
+    number_data = read_file(args.numbers_file[0])
+    if args.weights_file is not None:
+        weight_data = read_file(args.weights_file)
+    else :
+        weight_data = ["1"] * len(number_data)
+
+    numbers = convert_numbers(number_data)
+    weights = convert_numbers(weight_data)
     
-    result = average_of_squares(numbers, weights)
+    result = average_of_squares(number_data, weight_data)
     
     print(result)
